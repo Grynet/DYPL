@@ -5,9 +5,13 @@ class Jtrans(Translater):
     def __init__(self):
         self.obj = None
 
+	def parse(self, element):
+		print(element)
+		
     def actionPerformed(self, event):
-		print(self.obj.getCode())
-		print ("efter")
+		list = self.obj.getCode().splitlines()
+		for element in list:
+			self.parse(element)
 		
     def setDYPL( self, obj ):
 		self.obj = obj  
