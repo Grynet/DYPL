@@ -3,15 +3,15 @@ import Translater
 class Jtrans(Translater):
 
     def __init__(self):
-        pass
+        self.obj = None
 
     def actionPerformed(self, event):
-        print("Button clicked. Got event:")
-        print(event)
-
+		print(self.obj.getCode())
+		print ("efter")
+		
     def setDYPL( self, obj ):
-        print("Got a DYPL instance: ")
-        print(obj)
+		self.obj = obj  
+		print("Object set")		       
 
 if __name__ == '__main__':
     import DYPL
