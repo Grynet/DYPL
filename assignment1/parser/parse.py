@@ -24,17 +24,10 @@ move = "move(" + expression + "," + expression +")"
 turnCW = "turn cw("+ expression + ")"
 turnCCW = "turn ccw(" + expression + ")"
 put = "put(" + expression + "," + expression + "," + expression + ")"
-# forLoop = "for " + variable + "=" + expression + "to" + expression + "do\n" + statement + Optional("\n" + statement) + "\nend"
-# statement = penDown ^  penUp ^  moveForward ^  moveBackward ^  move ^  turnCW ^  turnCCW ^  put
+statement = penDown ^  penUp ^  moveForward ^  moveBackward ^  move ^  turnCW ^  turnCCW ^  put
+forLoop = "for"+variable+"="+ expression+"to"+expression+"do"+White('\n', exact=1)+OneOrMore(statement+White('\n', exact=1))+"end"
 
-head = "for"+variable+"="+ constant+"to"+constant+"do"+White('\n', exact=1)
-body = penDown+White('\n', exact=1)
-end = Literal("end")
-forLoop = head+body+end
-
-# forLoop = "for " + variable + "=" + expression + "to" + expression + "do\n" + statement + Optional("\n" + statement) + "\nend"
-# statement = penDown ^  penUp ^  moveForward ^  moveBackward ^  move ^  turnCW ^  turnCCW ^  put ^ head
-
+input = expression ^ statement ^ forLoop
 
 arithmeticTest = ["9",
 		"1+2",
@@ -46,26 +39,26 @@ arithmeticTest = ["9",
 		]
 
 
-statementTest = [#"pen down",
-		# "pen up",
-		# "move forward",
-		# "move backward",
-		# "move(10,45)",
-		# "turn cw(90)",
-		# "turn ccw(30)",
-		# "put(10,50,45)",
-		"for X=0 to 10 do\n pen down\nend"
+statementTest = ["pen down",
+		"pen up",
+		"move forward",
+		"move backward",
+		"move(10,45)",
+		"turn cw(90)",
+		"turn ccw(30)",
+		"put(10,50,45)",
+		"for X=3*5 to 10 do\n pen down\n move(10,45)\nend"
 		]
 		
 
-# for t in arithmeticTest:
-	# print("Expression: %s" % t)	
-	# print("Parse: %s" % expression.parseString(t))
-	# print 
+for t in arithmeticTest:
+	print("Expression: %s" % t)	
+	print("Parse: %s" % expression.parseString(t))
+	print 
 	
 print '##################\n'
 	
 for t in statementTest:
 	print("Statement: %s" % t)
-	print("Parse: %s" % forLoop.parseString(t,parseAll=True))
+	print("Parse: %s" % input.parseString(t,parseAll=True))
 	print
