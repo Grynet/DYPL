@@ -53,7 +53,7 @@ statementTest = ["pen down",
 
 for t in arithmeticTest:
 	print("Expression: %s" % t)	
-	print("Parse: %s" % expression.parseString(t))
+	print("Parse: %s" % expression.parseString(t, parseAll = True))
 	print 
 	
 print '##################\n'
