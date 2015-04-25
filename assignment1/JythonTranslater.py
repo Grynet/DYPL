@@ -35,9 +35,57 @@ class Jtrans(Translater):
 	def __init__(self):
 		self.obj = None
 
+	def evaluate(self, expression):		
+		string =""
+		for index in expression:			
+			string += str(self.evaluate(index) if isinstance(index, list) else index)
+		return eval(string)
+		
+
 	def parse(self, command):
 		print ("Command: %s" % command)
-		print("Parse: %s" % input.parseString(command,parseAll=True))
+		parse = input.parseString(command,parseAll=True).asList()
+		
+		method = parse[0]
+		
+		if(method == 'pen down'):
+			return ['pen down']
+		elif(method == 'pen up'):
+			return ['pen up']
+		elif(method == 'move forward'):
+			return ['move forward']
+		elif(method == 'move backward'):
+			return ['move backward']
+		elif(method == 'move('):
+			steps = self.evaluate(parse[1])
+			angle = self.evaluate(parse[3])
+			return ['move', steps, angle]
+		elif(method == 'turn cw('):
+			angle = self.evaluate(parse[1])
+			return ['turn cw', angle]
+		elif(method == 'turn ccw('):
+			angle = self.evaluate(parse[1])
+			return ['turn ccw', angle]
+		elif(method == 'put('):
+			xpos = self.evaluate(parse[1])
+			ypos = self.evaluate(parse[3])
+			angle = self.evaluate(parse[5])
+			return ['put', xpos, ypos, angle]
+		elif(method == 'for'):		
+			start = self.evaluate(parse[3])
+			end = self.evaluate(parse[5])
+			# parse = [start if(x == parse[1]) else x for x in parse]
+			# endLoop = parse.index('end')
+			# statements = parse
+			
+			print parse
+			return ['for', start, end]
+
+
+			
+			
+			
+			
 
 	# def actionPerformed(self, event):
 		# command_list = self.obj.getCode().splitlines()
@@ -56,7 +104,7 @@ class Jtrans(Translater):
 					++index
 					stmt = command_list.pop(index)
 				command += 'end'
-			self.parse(command)
+			print self.parse(command)
 		print("####################################")
 
 
