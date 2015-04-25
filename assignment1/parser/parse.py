@@ -1,6 +1,6 @@
 from pyparsing import *
-import re
 
+###########Grammar###########
 constant = Word(nums)
 variable = Word(alphas)
 operand = constant ^ variable
@@ -26,8 +26,8 @@ turnCCW = "turn ccw(" + expression + ")"
 put = "put(" + expression + "," + expression + "," + expression + ")"
 statement = penDown ^  penUp ^  moveForward ^  moveBackward ^  move ^  turnCW ^  turnCCW ^  put
 forLoop = "for"+variable+"="+ expression+"to"+expression+"do"+White('\n', exact=1)+OneOrMore(statement+White('\n', exact=1))+"end"
-
 input = expression ^ statement ^ forLoop
+###########Grammar###########
 
 arithmeticTest = ["9",
 		"1+2",
