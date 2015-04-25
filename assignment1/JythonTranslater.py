@@ -35,17 +35,38 @@ class Jtrans(Translater):
 	def __init__(self):
 		self.obj = None
 
-	def evaluate(self, expression):		
+	def evaluate(self, expression):
 		string =""
-		for index in expression:			
+		for index in expression:
 			string += str(self.evaluate(index) if isinstance(index, list) else index)
 		return eval(string)
 		
-
-	def parse(self, command):
-		print ("Command: %s" % command)
-		parse = input.parseString(command,parseAll=True).asList()
+	def createSublist(self,list):
+		current = []
+		for element in list:
+			if element=="\n":
+				yield current
+				current = []
+			else:
+				current.append(element)
+		yield current
 		
+	def magicsplit(self,l, *splitters):
+		return [subl for subl in self.createSublist(l) if subl]
+	
+	def variableReplace(self, inputList, variable, value):
+		output = []
+		for x in inputList:
+			if (isinstance(x, list)):
+				for y in self.variableReplace(x, variable, value):
+					output.append(y)
+			elif(x == variable):
+				output.append(value)
+			else:
+				output.append(x)
+		return output
+
+	def createOutput(self, parse):
 		method = parse[0]
 		
 		if(method == 'pen down'):
@@ -71,28 +92,23 @@ class Jtrans(Translater):
 			ypos = self.evaluate(parse[3])
 			angle = self.evaluate(parse[5])
 			return ['put', xpos, ypos, angle]
-		elif(method == 'for'):		
-			start = self.evaluate(parse[3])
-			end = self.evaluate(parse[5])
-			# parse = [start if(x == parse[1]) else x for x in parse]
-			# endLoop = parse.index('end')
-			# statements = parse
-			
-			print parse
-			return ['for', start, end]
+		elif(method == 'for'):
+			start = self.evaluate(parse[3]) #loop variable value
+			end = self.evaluate(parse[5])  #end loop value, e.g. "...to 100" where 100 is end loop value
+			parse = [str(start) if(x == parse[1]) else x for x in parse] #loop variable to value
+			startLoop = parse.index('do')+2 #beginning of statements in for loop
+			endLoop = parse.index('end')-1 #end of statements in for loop
+			statements = [] 
+			sublist = self.magicsplit(parse[startLoop:endLoop]) #create loop statement sublist
+			for statement in sublist:
+				statements.append(self.createOutput(statement))
+			return ['for', start, end, statements]
 
-
+	def parse(self, command):
+		parse = input.parseString(command,parseAll=True).asList()
+		return self.createOutput(parse)
 			
 			
-			
-			
-
-	# def actionPerformed(self, event):
-		# command_list = self.obj.getCode().splitlines()
-		# for command in command_list:
-			# self.parse(command)
-		# print ("ActionPerformed executed")
-
 	def actionPerformed(self, event):
 		command_list = self.obj.getCode().splitlines(True)
 		for command in command_list:
@@ -104,8 +120,9 @@ class Jtrans(Translater):
 					++index
 					stmt = command_list.pop(index)
 				command += 'end'
+			print "Command: %s \n" % command
 			print self.parse(command)
-		print("####################################")
+			print("####################################")
 
 
 	def setDYPL( self, obj ):
