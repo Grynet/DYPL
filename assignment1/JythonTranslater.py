@@ -136,21 +136,32 @@ class Jtrans(Translater):
 		parse = input.parseString(command,parseAll=True).asList()
 		return self.createOutput(parse)
 			
-			
+	
+	'''
+	execute takes the given command and executes it
+	
+	@command the command to be executed
+	'''
+	
+	def execute(self, command): #dummy method, add real functionality
+		print command
+		print "###############"
+	
 	def actionPerformed(self, event):
 		command_list = self.obj.getCode().splitlines(True)
 		for command in command_list:
-			if(command.startswith('for')):
-				index = command_list.index(command) +1
-				stmt = command_list.pop(index)
-				while(stmt != 'end'):
+			if(command.startswith('for')): #if for loop grab the statements it contains
+				index = command_list.index(command) +1 #index start of for statement
+				stmt = command_list.pop(index) 
+				while(stmt != 'end' and stmt != 'end\n'): #while still in for loop statements
 					command += stmt
 					++index
 					stmt = command_list.pop(index)
 				command += 'end'
-			print "Command: %s \n" % command
-			print self.parse(command)
-			print("####################################")
+			print "Command: %s \n" % command #cmd output for development validation purpose
+			command = self.parse(command)
+			self.execute(command)
+
 
 
 	def setDYPL( self, obj ):
