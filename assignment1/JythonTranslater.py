@@ -35,26 +35,45 @@ class Jtrans(Translater):
 	def __init__(self):
 		self.obj = None
 
+	'''
+	evaluate is used to calculate a arithmetic expression
+	
+	@expression the arithmetic expression 
+	@variable if this variable is found , it is replaced by variableValue
+	@variableValue the value that is meant to replace variable
+	@return the value of the evaluated expression 
+	'''
 	def evaluate(self, expression, variable=None, variableValue=None):
 		string =""
 		for index in expression:
 			index = variableValue if index == variable else index
 			string += str(self.evaluate(index) if isinstance(index, list) else index)
 		return eval(string)
-		
-	def createSublist(self,list):
-		current = []
-		for element in list:
-			if element=="\n":
-				yield current
-				current = []
-			else:
-				current.append(element)
-		yield current
-		
-	def magicsplit(self,l, *splitters):
-		return [subl for subl in self.createSublist(l) if subl]
-
+	
+	
+	'''
+	createSublists is used to create the statement lists outputted by for loops from createOutput
+	
+	@inputList the newline separated statement list
+	@return a statement list of statements that are formatted as lists [[statement1], [statement2]]
+	'''
+	def createSublists(self, inputList):
+		output = []
+		sublist = []
+		for x in inputList:
+			sublist.append(x)
+			if (x == '\n'):
+				output.append(sublist)
+				sublist = []
+		output.append(sublist)
+		return output
+	'''
+	createOutput is used to generate statement outputs that can be easily interpreted
+	
+	@parse the parsed expression that is to be converted to valid output
+	@eval if true all the arithmetic expressions will be calculated else the will just be formatted strings
+	@return a formatted output on the form: ['statement name', param1,param2...paramN]
+	'''
 	def createOutput(self, parse, eval=True):
 		method = parse[0]
 		
@@ -75,10 +94,8 @@ class Jtrans(Translater):
 			output.append(steps)
 			output.append(angle)
 		elif(method == 'turn cw('):
-
 			angle = self.evaluate(parse[1]) if eval == True else parse[1]
 			output.append('turn cw')
-			print "Angle: %s" % angle
 			output.append(angle)
 		elif(method == 'turn ccw('):
 			angle = self.evaluate(parse[1]) if eval == True else parse[1]
@@ -99,8 +116,7 @@ class Jtrans(Translater):
 			endLoop = parse.index('end')-1 #end of statements in for loop
 			statements = [] 
 			test = parse[startLoop:endLoop]
-			print "Test: %s" % test
-			sublist = self.magicsplit(parse[startLoop:endLoop]) #create loop statement sublist
+			sublist = self.createSublists(parse[startLoop:endLoop]) #create loop statement sublist
 			for statement in sublist:
 				statements.append(self.createOutput(statement, False))
 			output.append('for')
@@ -110,10 +126,14 @@ class Jtrans(Translater):
 			output.append(statements) #loop statements
 			
 		return output
-
+	'''
+	parse is used parse a input string and check if the string contains valid input
+	
+	@command the input string containing a possible valid command
+	@return the command in formatted by createOutput
+	'''
 	def parse(self, command):
 		parse = input.parseString(command,parseAll=True).asList()
-		print "Parse: %s" % parse
 		return self.createOutput(parse)
 			
 			
