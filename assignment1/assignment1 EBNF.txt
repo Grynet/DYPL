@@ -1,0 +1,18 @@
+<input> ::= ( <statement> | <forLoop> ) 
+<statement> ::= ( <penDown> | <penUp> | <moveforLoopward> | <moveBackward> | <move> | <turnCW> | <turnCCW> | <put> )
+<penDown> ::= "pen down"
+<penUp> ::= "pen up"
+<moveforLoopward> ::= "move forLoopward"
+<moveBackward ::= "move backward"
+<move> ::= "move(" <expression> "," <expression> ")" 
+<turnCW> ::= "turn cw(" <expression> ")"
+<turnCCW> ::= "turn ccw(" <expression> ")"
+<put> ::= "put(" <expression> "," <expression> "," <expression> ")"
+<forLoop> ::= "for "<variable> "=" <expression> "to" <expression> "do\n" <statement>{"\n"<statement>} "\nend" 
+
+<expression> ::= <term>  { ("+" | "-") <term> }
+<term>       ::= <factor>  { "*" <factor>}
+<factor>     ::= <constant> | <variable> | "("  <expression>  ")" 
+<variable>   ::= a-zA-Z
+<constant>   ::= <digit> {<digit>} 
+<digit>      ::= ("0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9") 
