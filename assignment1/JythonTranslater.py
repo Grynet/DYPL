@@ -35,9 +35,10 @@ class Jtrans(Translater):
 	def __init__(self):
 		self.obj = None
 
-	def evaluate(self, expression):
+	def evaluate(self, expression, variable=None, variableValue=None):
 		string =""
 		for index in expression:
+			index = variableValue if index == variable else index
 			string += str(self.evaluate(index) if isinstance(index, list) else index)
 		return eval(string)
 		
@@ -53,59 +54,66 @@ class Jtrans(Translater):
 		
 	def magicsplit(self,l, *splitters):
 		return [subl for subl in self.createSublist(l) if subl]
-	
-	def variableReplace(self, inputList, variable, value):
-		output = []
-		for x in inputList:
-			if (isinstance(x, list)):
-				for y in self.variableReplace(x, variable, value):
-					output.append(y)
-			elif(x == variable):
-				output.append(value)
-			else:
-				output.append(x)
-		return output
 
-	def createOutput(self, parse):
+	def createOutput(self, parse, eval=True):
 		method = parse[0]
 		
+		output = []
+		
 		if(method == 'pen down'):
-			return ['pen down']
+			output.append('pen down')
 		elif(method == 'pen up'):
-			return ['pen up']
+			output.append('pen up')
 		elif(method == 'move forward'):
-			return ['move forward']
+			output.append('move forward')
 		elif(method == 'move backward'):
-			return ['move backward']
+			output.append('move backward')
 		elif(method == 'move('):
-			steps = self.evaluate(parse[1])
-			angle = self.evaluate(parse[3])
-			return ['move', steps, angle]
+			steps = self.evaluate(parse[1]) if eval == True else parse[1]
+			angle = self.evaluate(parse[3]) if eval == True else parse[3]
+			output.append('move')
+			output.append(steps)
+			output.append(angle)
 		elif(method == 'turn cw('):
-			angle = self.evaluate(parse[1])
-			return ['turn cw', angle]
+
+			angle = self.evaluate(parse[1]) if eval == True else parse[1]
+			output.append('turn cw')
+			print "Angle: %s" % angle
+			output.append(angle)
 		elif(method == 'turn ccw('):
-			angle = self.evaluate(parse[1])
-			return ['turn ccw', angle]
+			angle = self.evaluate(parse[1]) if eval == True else parse[1]
+			output.append('turn cw')
+			output.append(angle)
 		elif(method == 'put('):
-			xpos = self.evaluate(parse[1])
-			ypos = self.evaluate(parse[3])
-			angle = self.evaluate(parse[5])
-			return ['put', xpos, ypos, angle]
+			xpos = self.evaluate(parse[1]) if eval == True else parse[1]
+			ypos = self.evaluate(parse[3]) if eval == True else parse[3]
+			angle = self.evaluate(parse[5]) if eval == True else parse[5]
+			output.append('put')
+			output.append(xpos)
+			output.append(ypos)
+			output.append(angle)
 		elif(method == 'for'):
 			start = self.evaluate(parse[3]) #loop variable value
 			end = self.evaluate(parse[5])  #end loop value, e.g. "...to 100" where 100 is end loop value
-			parse = [str(start) if(x == parse[1]) else x for x in parse] #loop variable to value
 			startLoop = parse.index('do')+2 #beginning of statements in for loop
 			endLoop = parse.index('end')-1 #end of statements in for loop
 			statements = [] 
+			test = parse[startLoop:endLoop]
+			print "Test: %s" % test
 			sublist = self.magicsplit(parse[startLoop:endLoop]) #create loop statement sublist
 			for statement in sublist:
-				statements.append(self.createOutput(statement))
-			return ['for', start, end, statements]
+				statements.append(self.createOutput(statement, False))
+			output.append('for')
+			output.append(str(parse[1])) #loop variable
+			output.append(start) 
+			output.append(end) 
+			output.append(statements) #loop statements
+			
+		return output
 
 	def parse(self, command):
 		parse = input.parseString(command,parseAll=True).asList()
+		print "Parse: %s" % parse
 		return self.createOutput(parse)
 			
 			
