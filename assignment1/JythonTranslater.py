@@ -156,41 +156,44 @@ class Jtrans(Translater):
 			print "Command: %s \n" % command #cmd output for development validation purpose
 			command = self.parse(command)
 			self.execute(command)
-			##############################################
-			self.execute(command, None, None)
+
 		
 	'''
 	execute takes the given command and executes it
 	
 	@command the command to be executed
 	'''
-	def execute(self, command, loopVariableName, loopVariableValue):
-		for element in command:
-			if element == loopVariableName:
-				element = loopVariableValue
-		key = command[0]
-		if key == "pen down":
-			self.penDown()
-		elif key == "pen up":
-			self.penUp()
-		elif key == "move forward":
-			self.moveForward()
-		elif key == "move backward":
-			self.moveBackward()
-		elif key == "move":
-			self.move(command[1], command[2])
-		elif key == "turn cw":
-			self.turnCW(command[1])
-		elif key == "turn ccw":
-			self.turnCCW(command[1])
-		elif key == "put":
-			self.put(command[1], command[2], command[3])
-		elif key == "for":
-			for command[1] in range(command[2], command[3]):
-				for statement in command[4]:
-					self.execute(statement, command[1], command[2])
-		elif key == "end":
-			break
+	# def execute(self, command, loopVariableName, loopVariableValue):
+		# for element in command:
+			# if element == loopVariableName:
+				# element = loopVariableValue
+		# key = command[0]
+		# if key == "pen down":
+			# self.penDown()
+		# elif key == "pen up":
+			# self.penUp()
+		# elif key == "move forward":
+			# self.moveForward()
+		# elif key == "move backward":
+			# self.moveBackward()
+		# elif key == "move":
+			# self.move(command[1], command[2])
+		# elif key == "turn cw":
+			# self.turnCW(command[1])
+		# elif key == "turn ccw":
+			# self.turnCCW(command[1])
+		# elif key == "put":
+			# self.put(command[1], command[2], command[3])
+		# elif key == "for":
+			# for command[1] in range(command[2], command[3]):
+				# for statement in command[4]:
+					# self.execute(statement, command[1], command[2])
+		# elif key == "end":
+			# pass
+			
+	def execute(self, command):
+		print command
+		print "###############"
 
 	def penDown(self):
 		penOn = True
