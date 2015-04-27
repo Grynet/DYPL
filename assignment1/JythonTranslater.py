@@ -25,9 +25,9 @@ move = "move(" + expression + "," + expression +")"
 turnCW = "turn cw("+ expression + ")"
 turnCCW = "turn ccw(" + expression + ")"
 put = "put(" + expression + "," + expression + "," + expression + ")"
-statement = penDown ^  penUp ^  moveForward ^  moveBackward ^  move ^  turnCW ^  turnCCW ^  put
-forLoop = "for"+variable+"="+ expression+"to"+expression+"do"+White('\n', exact=1)+OneOrMore(statement+White('\n', exact=1))+"end"
-input = expression ^ statement ^ forLoop
+statement = (penDown ^  penUp ^  moveForward ^  moveBackward ^  move ^  turnCW ^  turnCCW ^  put)+Optional(White('\n', exact=1))
+forLoop = "for"+variable+"="+ expression+"to"+expression+"do"+White('\n', exact=1)+OneOrMore(statement)+"end"+Optional(White('\n', exact=1))
+input = forLoop ^ expression ^ statement
 ###########Grammar###########
 
 class Jtrans(Translater):
@@ -51,9 +51,12 @@ class Jtrans(Translater):
 	'''
 	def evaluate(self, expression, variable=None, variableValue=None):
 		string =""
-		for index in expression:
-			index = variableValue if index == variable else index
-			string += str(self.evaluate(index) if isinstance(index, list) else index)
+		if(isinstance(expression, list)):
+			for index in expression:
+				index = variableValue if index == variable else index
+				string += str(self.evaluate(index, variable, variableValue) if isinstance(index, list) else index)
+		else:
+			string = str(expression)
 		return eval(string)
 	
 	
@@ -138,16 +141,17 @@ class Jtrans(Translater):
 	@command the input string containing a possible valid command
 	@return the command in formatted by createOutput
 	'''
-	def parse(self, command):
+	def parse(self, command):		
 		parse = input.parseString(command,parseAll=True).asList()
 		return self.createOutput(parse)
 	
 	def actionPerformed(self, event):
 		command_list = self.obj.getCode().splitlines(True)
+		print "Command list: %s" % command_list
 		for command in command_list:
 			if(command.startswith('for')): #if for loop grab the statements it contains
-				index = command_list.index(command) +1 #index start of for statement
-				stmt = command_list.pop(index) 
+				index = command_list.index(command) +1#index start of for statement
+				stmt = str(command_list.pop(index))
 				while(stmt != 'end' and stmt != 'end\n'): #while still in for loop statements
 					command += stmt
 					++index
@@ -163,37 +167,45 @@ class Jtrans(Translater):
 	
 	@command the command to be executed
 	'''
-	# def execute(self, command, loopVariableName, loopVariableValue):
-		# for element in command:
-			# if element == loopVariableName:
-				# element = loopVariableValue
-		# key = command[0]
-		# if key == "pen down":
-			# self.penDown()
-		# elif key == "pen up":
-			# self.penUp()
-		# elif key == "move forward":
-			# self.moveForward()
-		# elif key == "move backward":
-			# self.moveBackward()
-		# elif key == "move":
-			# self.move(command[1], command[2])
-		# elif key == "turn cw":
-			# self.turnCW(command[1])
-		# elif key == "turn ccw":
-			# self.turnCCW(command[1])
-		# elif key == "put":
-			# self.put(command[1], command[2], command[3])
-		# elif key == "for":
-			# for command[1] in range(command[2], command[3]):
-				# for statement in command[4]:
-					# self.execute(statement, command[1], command[2])
-		# elif key == "end":
-			# pass
+	def execute(self, command, variable=None, variableValue=None):
+		
+		key = command[0]
+		if key == "pen down":
+			self.penDown()
+		elif key == "pen up":
+			self.penUp()
+		elif key == "move forward":
+			self.moveForward()
+		elif key == "move backward":
+			self.moveBackward()
+		elif key == "move":
+			steps = self.evaluate(command[1], variable, variableValue)
+			angle = self.evaluate(command[2], variable, variableValue)
+			self.move(steps, angle)
+		elif key == "turn cw":
+			angle = self.evaluate(command[1], variable, variableValue)
+			self.turnCW(angle)
+		elif key == "turn ccw":
+			angle = self.evaluate(command[1], variable, variableValue)
+			self.turnCCW(angle)
+		elif key == "put":			
+			xpos = self.evaluate(command[1], variable, variableValue)
+			ypos = self.evaluate(command[2], variable, variableValue)
+			angle = self.evaluate(command[3], variable, variableValue)
+			self.put(xpos, ypos, angle)
+		elif key == "for":
+			variable = command[1]
+			startValue = command[2]
+			endValue = command[3]
+			for value in range(startValue,endValue):	
+				for statement in command[4]:				
+					self.execute(statement, variable, value)			
+		
 			
-	def execute(self, command):
-		print command
-		print "###############"
+	# dummy execute
+	# def execute(self, command):
+		# print command
+		# print "###############"
 
 	def penDown(self):
 		penOn = True
