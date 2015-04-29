@@ -144,22 +144,25 @@ class Jtrans(Translater):
 	def parse(self, command):		
 		parse = input.parseString(command,parseAll=True).asList()
 		return self.createOutput(parse)
-	
+
 	def actionPerformed(self, event):
-		command_list = self.obj.getCode().splitlines(True)
-		print "Command list: %s" % command_list
-		for command in command_list:
-			if(command.startswith('for')): #if for loop grab the statements it contains
-				index = command_list.index(command) +1#index start of for statement
-				stmt = str(command_list.pop(index))
-				while(stmt != 'end' and stmt != 'end\n'): #while still in for loop statements
+		command_list = self.obj.getCode().splitlines(True) #Retrieve input as CSV 
+		index = 0
+		num_commands = len(command_list) #calculate number of commands received
+		while (index < num_commands):
+			command = command_list[index]
+			index +=1
+			if(command.startswith('for')): #if for loop is encountered, retrieve all commands in loop
+				while(index < num_commands):
+					stmt = command_list[index]
 					command += stmt
-					++index
-					stmt = command_list.pop(index)
-				command += 'end'
-			print "Command: %s \n" % command #cmd output for development validation purpose
+					index += 1
+					if(stmt == 'end' or stmt == 'end\n'):
+						break
 			command = self.parse(command)
 			self.execute(command)
+		
+		
 
 		
 	'''
