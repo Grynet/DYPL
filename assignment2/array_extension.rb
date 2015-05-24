@@ -1,4 +1,41 @@
 class Array
+	def method_missing(method, *args)
+		method = method.to_s
+		#usability method for select_first without interval
+		if method.to_s =~ /^select_first_where_(.*)_is?$/
+			symbol = $1.to_sym
+			
+			self.class.send(:define_method, method){|args| return select_first(symbol => args)}
+			return send(method, args.first)
+		#usability method for select_first with interval
+		elsif method =~ /^select_first_where_(.*)_is_in?$/
+			symbol = $1.to_sym
+			
+			self.class.send(:define_method, method){|minValue, maxValue| 
+				return select_first(:name => symbol, :interval => {:min => minValue, :max => maxValue })
+			}
+			return send(method, args.first, args.last)
+			
+		#usability method for select_all without interval
+		elsif method.to_s =~ /^select_all_where_(.*)_is?$/
+			symbol = $1.to_sym
+			
+			self.class.send(:define_method, method){|args| return select_all(symbol => args)}
+			return send(method, args.first)
+			
+		#usability method for select_all without interval
+		elsif method.to_s =~ /^select_all_where_(.*)_is(_in)?$/
+			symbol = $1.to_sym
+			
+			self.class.send(:define_method, method){|minValue, maxValue| 
+				return select_all(:name => symbol, :interval => {:min => minValue, :max => maxValue })
+			}
+			return send(method, args.first, args.last)
+		else
+			puts "Unsupported method: #{method} with args: #{args.join(', ')}"
+		end
+	end
+
 	def select_first(**args)
 		num_args = args.length				
 		if num_args == 1
@@ -10,6 +47,7 @@ class Array
 		end
 	end
 	
+	#select_first help function
 	def get_first(**args)	
 		key, value = args.first		
 		if value.class == Array
@@ -19,6 +57,7 @@ class Array
 		end
 	end
 	
+	#select_first help function
 	def get_first_interval(**args)		
 		function = args[:name]
 		interval = args[:interval]
@@ -51,6 +90,7 @@ class Array
 		end
 	end
 	
+	#select_all help function
 	def get_all(**args)
 		key, value = args.first
 		if value.class == Array
@@ -60,6 +100,7 @@ class Array
 		end	
 	end
 	
+	#select_all help function
 	def get_all_interval(**args)		
 		function = args[:name]
 		interval = args[:interval]
