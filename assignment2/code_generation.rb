@@ -31,7 +31,6 @@ module Model
 		my_class = Class.new
 
 		# adding the nameless class to the constants will also make it take the name that we give it
-		#self.class.const_set(class_name, my_class)
 		my_class.class.const_set("#{class_name}", my_class)
 
 		# Class has a private method "define_method". It could be used from another method inside the 

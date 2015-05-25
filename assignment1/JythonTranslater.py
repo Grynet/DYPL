@@ -205,11 +205,6 @@ class Jtrans(Translater):
 					self.execute(statement, variable, value)			
 		
 			
-	# dummy execute
-	# def execute(self, command):
-		# print command
-		# print "###############"
-
 	def penDown(self):
 		penOn = True
 
