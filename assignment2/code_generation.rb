@@ -59,10 +59,12 @@ module Model
 						new_constraint = constraint.gsub(attribute, arg.to_s)
 					end
 					if not eval(new_constraint) 
-						raise #RuntimeError
+						raise RuntimeError.new("Illegal Argument Error")
 					end
 				end
 				eval("@#{attribute} = arg")
+			else
+				raise RuntimeError.new("Illegal Type Error")
 			end})
 			my_class.send(:define_method, attribute.to_sym, lambda{
 				eval("@#{attribute}")})
@@ -73,26 +75,26 @@ module Model
 			yamlContent.each do | content |
 				content[1].each do | entries |
 					object = my_class.new
-					exists = true
+					class_variable_exists = true
 					entries.each do | key, value | 
 						equation = ""
-						check_variable = "object.#{key}"
+						controll_variable = "object.#{key}"
 						if value.class == Fixnum
 							equation = "object.#{key}=(#{value})"
 						else
 							equation = "object.#{key}=('#{value}')"
 						end
-						if defined? eval("#{check_variable}") == method
+						if defined? eval("#{controll_variable}") == method
 							begin
 								eval("#{equation}")
 							rescue RuntimeError
-								exists = false
+								class_variable_exists = false
 							end
 						else
-							exists = false
+							class_variable_exists = false
 						end
 					end
-					if exists
+					if class_variable_exists
 						object_array << object
 					end
 				end
