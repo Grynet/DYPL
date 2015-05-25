@@ -1,8 +1,8 @@
-require 'YAML'
 module Model
 	def self.generate(filepath)
 		file = File.open(filepath)
 		array_of_lines = file.readlines
+		file.close()
 		title_line = array_of_lines[0].split(" ")
 		title_line[1].slice! ":"
 		class_name = title_line[1]
