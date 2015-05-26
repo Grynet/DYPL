@@ -3,20 +3,21 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 
-public class NumberEncoder {
+
+public class NumberEncoder {	
 	
-	HashMap<Integer, char[]> mappings;
+	private HashMap<Integer, char[]> mappings = new HashMap<>();
+	private ArrayList<String> words = new ArrayList<>();
 	
-	NumberEncoder(){
-		defineMappings();
+	NumberEncoder(String filePath){
+		words = readWordsFromFile(filePath);
+		addMappings();
 	}
-	
-	
-	private void defineMappings(){
-		mappings = new HashMap<>();
+		
+	private void addMappings(){
 		mappings.put(0, new char[]{'e'});
 		mappings.put(1, new char[]{'j','n','q'});
 		mappings.put(2, new char[]{'r','w','x'});
@@ -28,17 +29,13 @@ public class NumberEncoder {
 		mappings.put(8, new char[]{'l','o','p'});
 		mappings.put(9, new char[]{'g','h','z'});
 	}
-
-	public String[] readFile(String filePath, int numWords) {
-
-		String[] results = new String[numWords];
-		//Skapa en counter som räknar alla rader, istället för numWords? På så sätt slippa beroendet av att veta hur många rader det är i filen.
+	
+	private ArrayList<String> readWordsFromFile(String filePath){
+		ArrayList<String> words = new ArrayList<String>();
 		try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
 			String line = br.readLine();
-			int index = 0;
-
-			while (line != null && index < results.length) {
-				results[index++] = line;
+			while (line != null) {
+				words.add(line);
 				line = br.readLine();
 			}
 		} catch (FileNotFoundException e) {
@@ -47,32 +44,54 @@ public class NumberEncoder {
 			e.printStackTrace();
 		}
 
-		return results;
+		return words;
 	}
 	
-	
-	public int[] encode(String number){
-		int[]numberArray = new int[number.length()];
-		int counter = 0;
-		for(char digit : number.toCharArray()) {
-		    Integer.parseInt(digit+"");
-			numberArray[counter] = Integer.parseInt(digit+"");
-			counter++;
+	private ArrayList<Integer> numberToDigits(int number){
+		ArrayList<Integer> digits = new ArrayList<>();
+		
+		while(number > 0){
+			digits.add(number%10);
+			number /= 10;
 		}
-		return numberArray;
+		
+		Collections.reverse(digits);
+		return digits;
+	}	
+	
+	private ArrayList<String> matchingStrings(ArrayList<String> matches, ArrayList<Integer> digits, int index){
+		int digit = digits.get(0);
+		for(String word : matches){
+			if(index < word.length()){
+				char character = word.charAt(index);
+				boolean match = false;
+				for(char c : mappings.get(digit)){
+					if(character == c)
+						match = true;
+				}
+				if(!match)
+					matches.remove(word);
+			}				
+		}
+		return matches;
+	}	
+	
+	
+	public String encode(int number){			
+		return null;		
 	}
 	
 	
 
-	public static void main(String[] args) {
-		NumberEncoder encoder = new NumberEncoder();
-		String filePath = "dict.txt";
-		int numWords = 676;
-		String[] results = encoder.readFile(filePath, numWords);
-		encoder.encode("12345");
-		
+	
+			
+	
+	
+
+	
+	
 		 
 
-	}
-
 }
+
+
