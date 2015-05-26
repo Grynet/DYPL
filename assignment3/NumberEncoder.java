@@ -2,7 +2,9 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class NumberEncoder {
 	
@@ -30,7 +32,7 @@ public class NumberEncoder {
 	public String[] readFile(String filePath, int numWords) {
 
 		String[] results = new String[numWords];
-
+		//Skapa en counter som räknar alla rader, istället för numWords? På så sätt slippa beroendet av att veta hur många rader det är i filen.
 		try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
 			String line = br.readLine();
 			int index = 0;
@@ -49,31 +51,15 @@ public class NumberEncoder {
 	}
 	
 	
-	public void encode(int number){
-		String[] numberArray = String.valueOf(number).split("");
-		
-		int[] test = new int[numberArray.length];
-		int i = 0;
-		do{
-			test[i++] = number %10;
-			number /= 10;
-			
-		}while(number != 0);
-		
-		
-		
-		int reverseIndex = test.length-1;
-		int [] results = new int[test.length];
-		
-		while(reverseIndex >= 0){
-			results[reverseIndex] = test[reverseIndex];	
-//			System.out.println("Index value: "+ test[reverseIndex]);
-			reverseIndex--;
+	public int[] encode(String number){
+		int[]numberArray = new int[number.length()];
+		int counter = 0;
+		for(char digit : number.toCharArray()) {
+		    Integer.parseInt(digit+"");
+			numberArray[counter] = Integer.parseInt(digit+"");
+			counter++;
 		}
-		
-		for(int a : results)
-			System.out.println(a);
-		
+		return numberArray;
 	}
 	
 	
@@ -82,8 +68,8 @@ public class NumberEncoder {
 		NumberEncoder encoder = new NumberEncoder();
 		String filePath = "dict.txt";
 		int numWords = 676;
-//		String[] results = encoder.readFile(filePath, numWords);
-		encoder.encode(12345);
+		String[] results = encoder.readFile(filePath, numWords);
+		encoder.encode("12345");
 		
 		 
 
