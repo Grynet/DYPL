@@ -73,20 +73,21 @@ public class NumberEncoder {
 	}
 
 
-	private void printMatch(String number, String result){
-
+	private void printMatch(String number, String result, ArrayList<String> dict){
+		String wordAsNumber;
+		int wordLength;
 		if(number.equals(""))
-			System.out.println(result)
+			System.out.println(result);
 		else{
-			for(word : dict){
-				wordAsNumber = wordToNumber(word);
-				length = word.length
-				number.subString(0, length).equals(word)			
+			for(String word : dict){
+				wordAsNumber = wordAsNumber(word);
+				wordLength = word.length();
+				number.substring(0, wordLength).equals(word);// Vad ska hända med denna?			
 			}
 
-			result+= wordAsNumber;
+			result+= wordAsNumber;// word instead of wordAsNumber?
 
-			print printMatch(number.SubString(length, number.length), result)
+			printMatch(number.substring(wordLength, number.length()), result, dict);
 		}
 
 		
@@ -94,15 +95,19 @@ public class NumberEncoder {
 
 
 
-	private void sort (String number, ArrayList dict){
-		for(word : dict){
+	private ArrayList<String> createNumberSpecificDict (String number, ArrayList<String> dict){
+		ArrayList<String> resultDict = new ArrayList<String>();
+		for(String word : dict){
 			// Word to digit form
-
-			String newWord; //"hej" = "901"
-			if (!number.contains(newWord)){ 
-				dict.remove(word);
+			String newWord = ""; //"hej" = "901"
+			for(char c: word.toCharArray()){
+				newWord += mappings.get(c);
+			}
+			if (number.contains(newWord)){ 
+				resultDict.add(word);
 			}
 		}
+		return resultDict;
 	}
 	
 			 
