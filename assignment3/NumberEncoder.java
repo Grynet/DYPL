@@ -3,17 +3,18 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 
 
 public class NumberEncoder {	
 	
 	private HashMap<Character, Integer> mappings = new HashMap<>();
-	private ArrayList<String> words = new ArrayList<>();
+	private ArrayList<String> dictionary;
+	private ArrayList<String> numberList;
 	
-	NumberEncoder(String filePath){
-		words = readWordsFromFile(filePath);
+	NumberEncoder(String dictionaryFilePath, String numberListFilePath){
+		dictionary = readFromFile(dictionaryFilePath);
+		numberList = readFromFile(numberListFilePath);
 		addMappings();
 	}
 		
@@ -64,7 +65,7 @@ public class NumberEncoder {
 	}
 	
 	
-	private String wordAsNumber(String word){
+	private String wordToDigit(String word){
 		String result = "";
 		for(char c : word.toCharArray()){
 			result+=mappings.get(c);
@@ -72,36 +73,27 @@ public class NumberEncoder {
 		return result;
 	}
 
-	private void printMatch(String number, String result, ArrayList<String> dict){
-		String wordAsNumber;
-		int wordLength;
-
-		if(number.equals(""))
-			System.out.println(result);
-		else{
-			for(word : dict){
-				if(word.length > number.length)
-					continue;
-				wordAsNumber = wordToNumber(word);
-				length = word.length
-				if(number.subString(0, length).equals(wordAsNumber))				
-					System.out.println(printMatch(number.SubString(length, number.length), result+=wordAsNumber));	
-			}			
-		}		
+	private void createEncoding(String number, String encodedNumber, ArrayList<String> dict){
+		
 	}
 
 	private ArrayList<String> createNumberSpecificDict (String number, ArrayList<String> dict){
 		ArrayList<String> resultDict = new ArrayList<String>();
 		for(String word : dict){
-			String newWord = wordAsNumber(word);
-			if (number.contains(newWord)){ 
+			String digitWord = wordToDigit(word);
+			if (number.contains(digitWord)){ 
 				resultDict.add(word);
 			}
 		}
 		return resultDict;
 	}
 	
-			 
+	public void encode(){
+		for(String number : numberList){
+			ArrayList<String> localDict = createNumberSpecificDict(number, dictionary);
+			createEncoding(number, "", localDict);
+		}
+	}
 
 }
 
