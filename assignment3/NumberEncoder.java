@@ -46,12 +46,12 @@ public class NumberEncoder {
 		mappings.put('z', 9);
 	}
 	
-	private ArrayList<String> readWordsFromFile(String filePath){
-		ArrayList<String> words = new ArrayList<String>();
+	private ArrayList<String> readFromFile(String filePath){
+		ArrayList<String> output = new ArrayList<String>();
 		try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
 			String line = br.readLine();
 			while (line != null) {
-				words.add(line);
+				output.add(line);
 				line = br.readLine();
 			}
 		} catch (FileNotFoundException e) {
@@ -60,7 +60,7 @@ public class NumberEncoder {
 			e.printStackTrace();
 		}
 
-		return words;
+		return output;
 	}
 	
 	
@@ -72,28 +72,23 @@ public class NumberEncoder {
 		return result;
 	}
 
-
 	private void printMatch(String number, String result, ArrayList<String> dict){
 		String wordAsNumber;
 		int wordLength;
+
 		if(number.equals(""))
 			System.out.println(result);
 		else{
-			for(String word : dict){
-				wordAsNumber = wordAsNumber(word);
-				wordLength = word.length();
-				number.substring(0, wordLength).equals(word);// Vad ska hända med denna?			
-			}
-
-			result+= wordAsNumber;// word instead of wordAsNumber?
-
-			printMatch(number.substring(wordLength, number.length()), result, dict);
-		}
-
-		
+			for(word : dict){
+				if(word.length > number.length)
+					continue;
+				wordAsNumber = wordToNumber(word);
+				length = word.length
+				if(number.subString(0, length).equals(wordAsNumber))				
+					System.out.println(printMatch(number.SubString(length, number.length), result+=wordAsNumber));	
+			}			
+		}		
 	}
-
-
 
 	private ArrayList<String> createNumberSpecificDict (String number, ArrayList<String> dict){
 		ArrayList<String> resultDict = new ArrayList<String>();
