@@ -3,42 +3,55 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 
-public class NumberEncoder {
+
+public class NumberEncoder {	
 	
-	HashMap<Integer, char[]> mappings;
+	private HashMap<Character, Integer> mappings = new HashMap<>();
+	private ArrayList<String> words = new ArrayList<>();
 	
-	NumberEncoder(){
-		defineMappings();
+	NumberEncoder(String filePath){
+		words = readWordsFromFile(filePath);
+		addMappings();
+	}
+		
+	private void addMappings(){
+		mappings.put('e', 0);
+		mappings.put('j', 1);
+		mappings.put('n', 1);
+		mappings.put('q', 1);
+		mappings.put('r', 2);
+		mappings.put('w', 2);
+		mappings.put('x', 2);
+		mappings.put('d', 3);
+		mappings.put('s', 3);
+		mappings.put('y', 3);
+		mappings.put('f', 4);
+		mappings.put('t', 4);
+		mappings.put('a', 5);
+		mappings.put('m', 5);
+		mappings.put('c', 6);
+		mappings.put('i', 6);
+		mappings.put('v', 6);
+		mappings.put('b', 7);
+		mappings.put('k', 7);
+		mappings.put('u', 7);
+		mappings.put('l', 8);
+		mappings.put('o', 8);
+		mappings.put('p', 8);
+		mappings.put('g', 9);
+		mappings.put('h', 9);
+		mappings.put('z', 9);
 	}
 	
-	
-	private void defineMappings(){
-		mappings = new HashMap<>();
-		mappings.put(0, new char[]{'e'});
-		mappings.put(1, new char[]{'j','n','q'});
-		mappings.put(2, new char[]{'r','w','x'});
-		mappings.put(3, new char[]{'d','s','y'});
-		mappings.put(4, new char[]{'f','t'});
-		mappings.put(5, new char[]{'a','m'});
-		mappings.put(6, new char[]{'c','i','v'});
-		mappings.put(7, new char[]{'b','k','u'});
-		mappings.put(8, new char[]{'l','o','p'});
-		mappings.put(9, new char[]{'g','h','z'});
-	}
-
-	public String[] readFile(String filePath, int numWords) {
-
-		String[] results = new String[numWords];
-		//Skapa en counter som räknar alla rader, istället för numWords? På så sätt slippa beroendet av att veta hur många rader det är i filen.
+	private ArrayList<String> readWordsFromFile(String filePath){
+		ArrayList<String> words = new ArrayList<String>();
 		try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
 			String line = br.readLine();
-			int index = 0;
-
-			while (line != null && index < results.length) {
-				results[index++] = line;
+			while (line != null) {
+				words.add(line);
 				line = br.readLine();
 			}
 		} catch (FileNotFoundException e) {
@@ -47,32 +60,53 @@ public class NumberEncoder {
 			e.printStackTrace();
 		}
 
-		return results;
+		return words;
 	}
 	
 	
-	public int[] encode(String number){
-		int[]numberArray = new int[number.length()];
-		int counter = 0;
-		for(char digit : number.toCharArray()) {
-		    Integer.parseInt(digit+"");
-			numberArray[counter] = Integer.parseInt(digit+"");
-			counter++;
+	private String wordAsNumber(String word){
+		String result = "";
+		for(char c : word.toCharArray()){
+			result+=mappings.get(c);
 		}
-		return numberArray;
+		return result;
 	}
-	
-	
 
-	public static void main(String[] args) {
-		NumberEncoder encoder = new NumberEncoder();
-		String filePath = "dict.txt";
-		int numWords = 676;
-		String[] results = encoder.readFile(filePath, numWords);
-		encoder.encode("12345");
+
+	private void printMatch(String number, String result){
+
+		if(number.equals(""))
+			System.out.println(result)
+		else{
+			for(word : dict){
+				wordAsNumber = wordToNumber(word);
+				length = word.length
+				number.subString(0, length).equals(word)			
+			}
+
+			result+= wordAsNumber;
+
+			print printMatch(number.SubString(length, number.length), result)
+		}
+
 		
-		 
-
 	}
+
+
+
+	private void sort (String number, ArrayList dict){
+		for(word : dict){
+			// Word to digit form
+
+			String newWord; //"hej" = "901"
+			if (!number.contains(newWord)){ 
+				dict.remove(word);
+			}
+		}
+	}
+	
+			 
 
 }
+
+
