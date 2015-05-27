@@ -72,24 +72,24 @@ public class NumberEncoder {
 		return result;
 	}
 
-
 	private void printMatch(String number, String result){
 
 		if(number.equals(""))
 			System.out.println(result)
 		else{
+
 			for(word : dict){
+				if(word.length > number.length)
+					continue;
 				wordAsNumber = wordToNumber(word);
 				length = word.length
-				number.subString(0, length).equals(word)			
+				number.subString(0, length).equals(word)	
+				
+				print printMatch(number.SubString(length, number.length), result+=wordAsNumber)		
 			}
 
-			result+= wordAsNumber;
-
-			print printMatch(number.SubString(length, number.length), result)
-		}
-
-		
+			
+		}		
 	}
 
 
