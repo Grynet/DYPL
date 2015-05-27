@@ -46,12 +46,12 @@ public class NumberEncoder {
 		mappings.put('z', 9);
 	}
 	
-	private ArrayList<String> readWordsFromFile(String filePath){
-		ArrayList<String> words = new ArrayList<String>();
+	private ArrayList<String> readFromFile(String filePath){
+		ArrayList<String> output = new ArrayList<String>();
 		try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
 			String line = br.readLine();
 			while (line != null) {
-				words.add(line);
+				output.add(line);
 				line = br.readLine();
 			}
 		} catch (FileNotFoundException e) {
@@ -60,7 +60,7 @@ public class NumberEncoder {
 			e.printStackTrace();
 		}
 
-		return words;
+		return output;
 	}
 	
 	
@@ -84,12 +84,9 @@ public class NumberEncoder {
 					continue;
 				wordAsNumber = wordToNumber(word);
 				length = word.length
-				number.subString(0, length).equals(word)	
-				
-				print printMatch(number.SubString(length, number.length), result+=wordAsNumber)		
-			}
-
-			
+				if(number.subString(0, length).equals(wordAsNumber))				
+					System.out.println(printMatch(number.SubString(length, number.length), result+=wordAsNumber));	
+			}			
 		}		
 	}
 
