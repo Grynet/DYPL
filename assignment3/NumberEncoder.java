@@ -98,11 +98,7 @@ public class NumberEncoder {
 	private ArrayList<String> createNumberSpecificDict (String number, ArrayList<String> dict){
 		ArrayList<String> resultDict = new ArrayList<String>();
 		for(String word : dict){
-			// Word to digit form
-			String newWord = ""; //"hej" = "901"
-			for(char c: word.toCharArray()){
-				newWord += mappings.get(c);
-			}
+			String newWord = wordAsNumber(word);
 			if (number.contains(newWord)){ 
 				resultDict.add(word);
 			}
