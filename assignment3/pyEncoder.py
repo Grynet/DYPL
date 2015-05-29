@@ -7,12 +7,41 @@ DICT = {
 	"j":1
 }
 
+words = []
+
+results = []
+
 def wordToNumber(word):
 	return ''.join(str(DICT[e]) for e in list(word))
 
 def readWordFile(filePath):
 	with open(filePath, 'r') as theFile:
-		return [word.rstrip('\n') for word in theFile]
+		return [word.rstrip('\n').lower() for word in theFile]
 
 def match(number, word):
 	return wordToNumber(word) == number
+
+
+def findMatches(number, wordFilePath):
+	global words
+	words = readWordFile(wordFilePath)
+	encode(number, "")	
+
+def encode(number, encoding):
+	global words
+	global results
+	if number == "":
+		results.append("%s : %s" %(wordToNumber(encoding.replace(" ","")), encoding))
+	else:
+		for word in words:			
+			if len(word) <= len(number):
+				wordAsNumber = wordToNumber(word)
+				if number.startswith(wordAsNumber):
+					if(encoding == ""):
+						newEncoding = encoding + word
+					else:
+						newEncoding = encoding + " %s" % (word)	
+					newNumber = number[len(word):]	
+					encode(newNumber, newEncoding)	
+
+
