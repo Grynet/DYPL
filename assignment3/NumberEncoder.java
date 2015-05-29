@@ -16,10 +16,8 @@ public class NumberEncoder {
 	private ArrayList<String> dictionary;
 	private ArrayList<String> numberList;
 	private ArrayList<String> encodedNumberList;
-	private String[] lastEncoded;
 	private String currentRemainingNumber;
 	private String previousRemainingNumber;
-	private String encodedNumber;
 	private boolean noMatch;
 	private Stack<String[]> encodingStack;
 
@@ -27,14 +25,10 @@ public class NumberEncoder {
 		dictionary = readFromFile(dictionaryFilePath);
 		numberList = readFromFile(numberListFilePath);
 		encodedNumberList = new ArrayList<String>();
-		lastEncoded = new String[] { "", "" };
 		addMappings();
 		noMatch = true;
 	}
 
-	/**
-	 * 
-	 */
 	private void addMappings() {
 		mappings.put('e', 0);
 		mappings.put('j', 1);
@@ -65,8 +59,9 @@ public class NumberEncoder {
 	}
 
 	/**
-	 * Reads a file and makes every line in the file to a String and append the
-	 * String to an ArrayList.
+	 * Reads a file and makes every line in the file to a String, removes all
+	 * dashes and make all letters to lowerchase, then append the String to an
+	 * ArrayList.
 	 * 
 	 * @param filePath
 	 * @return ArrayList<String>
@@ -76,6 +71,8 @@ public class NumberEncoder {
 		try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
 			String line = br.readLine();
 			while (line != null) {
+				line = line.replace("-", "");
+				line = line.toLowerCase();
 				output.add(line);
 				line = br.readLine();
 			}
@@ -103,89 +100,33 @@ public class NumberEncoder {
 	}
 
 	/**
-	 * Searches dict for all possibly encodings of number.
+	 * Searches localDict for all possibly encodings of originalNumber. When it
+	 * finds a match it appends the match to the global ArrayList<String>()
+	 * encodedNumberList.
 	 * 
 	 * @param originalNumber
-	 * @param remainingNumber
-	 * @param encodedNumber
 	 * @param localDict
+	 * @return int
 	 */
-/*	
-private int createEncoding(String originalNumber,
-			ArrayList<String[]> localDict, ArrayList<String[]> forbiddenWords) {
-		if ((encodedNumber.replaceAll("\\s", "")).length() == originalNumber
-				.length()) {
-			System.out.println("Final");
-			encodedNumberList.add(originalNumber + " : " + encodedNumber);
-		} else {
-			noMatch = true;
-			ArrayList<String[]> localForbiddenWords = new ArrayList<String[]>();
-			for(String[] word : localDict){
-				boolean wordIsNotForbidden = true;
-				for(String[] entry : forbiddenWords){
-					if(entry[0].equals(word[0])){
-						wordIsNotForbidden = false;
-					}
-				}
-				if(currentRemainingNumber.startsWith(word[1]) && wordIsNotForbidden){
-					noMatch = false;
-					previousRemainingNumber = currentRemainingNumber;
-					currentRemainingNumber = currentRemainingNumber.substring(word[1].length());
-					lastEncoded = word;
-					encodedNumber = encodedNumber + " " + word[0];
-					int returnValue;
-					do{
-						returnValue = createEncoding(originalNumber, localDict, localForbiddenWords);
-						if(returnValue == 0){
-							encodedNumber = encodedNumber.substring(0, (encodedNumber.length())-(" "+word[0]).length());
-							currentRemainingNumber = previousRemainingNumber;
-							return -1;
-						}if (returnValue == -1){
-							localForbiddenWords.add(lastEncoded);
-						}
-					}while(returnValue == 0 || returnValue == -1);
-					System.out.println("not 0 or -1");
-					System.out.println(encodedNumber);
-					System.out.println("Current: "+currentRemainingNumber);
-					System.out.println("Prevoius: "+previousRemainingNumber);
-					encodedNumber = encodedNumber.substring(0, (encodedNumber.length())-(" "+word[0]).length());
-					currentRemainingNumber = previousRemainingNumber;
-				}
-			}
-			if (noMatch) {
-				return 0;
-			}
-		}
-		return 1;
-
-	}
-
-	*/
 	private int createEncoding(String originalNumber,
-			ArrayList<String[]> localDict, ArrayList<String[]> forbiddenWords) {
+			ArrayList<String[]> localDict) {
 		if (currentRemainingNumber.length() == 0) {
 			String result = "";
-			for(String[] word : encodingStack){
-				result += word[0]+" ";
+			for (String[] word : encodingStack) {
+				result += word[0] + " ";
 			}
 			encodedNumberList.add(originalNumber + " : " + result);
 		} else {
 			noMatch = true;
-			ArrayList<String[]> localForbiddenWords = new ArrayList<String[]>();
-			for(String[] word : localDict){
-				boolean wordIsNotForbidden = true;
-				for(String[] entry : forbiddenWords){
-					if(entry[0].equals(word[0])){
-						wordIsNotForbidden = false;
-					}
-				}
-				if(currentRemainingNumber.startsWith(word[1]) && wordIsNotForbidden){
+			for (String[] word : localDict) {
+				if (currentRemainingNumber.startsWith(word[1])) {
 					encodingStack.push(word);
 					noMatch = false;
 					String temp = previousRemainingNumber;
 					previousRemainingNumber = currentRemainingNumber;
-					currentRemainingNumber = currentRemainingNumber.substring(word[1].length());
-					createEncoding(originalNumber, localDict, new ArrayList<String[]>());
+					currentRemainingNumber = currentRemainingNumber
+							.substring(word[1].length());
+					createEncoding(originalNumber, localDict);
 					currentRemainingNumber = previousRemainingNumber;
 					previousRemainingNumber = temp;
 					encodingStack.pop();
@@ -199,7 +140,6 @@ private int createEncoding(String originalNumber,
 
 	}
 
-	
 	/**
 	 * Returns an ArrayList containing words from the dict, and the digit form
 	 * of that word, that can be created as a substring of number.
@@ -222,7 +162,8 @@ private int createEncoding(String originalNumber,
 	}
 
 	/**
-	 * Starts the encoding of the numberList with help of the dictionary.
+	 * Starts the encoding of the numberList with help of the dictionary. Then
+	 * prints out to the console all encodings.
 	 */
 	public void encode() {
 		for (String number : numberList) {
@@ -230,7 +171,7 @@ private int createEncoding(String originalNumber,
 					dictionary);
 			encodingStack = new Stack<String[]>();
 			currentRemainingNumber = number;
-			createEncoding(number, localDict, new ArrayList<String[]>());
+			createEncoding(number, localDict);
 		}
 		for (String e : encodedNumberList) {
 			System.out.println(e);
