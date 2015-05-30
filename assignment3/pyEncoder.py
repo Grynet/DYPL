@@ -17,7 +17,6 @@ DICT = {
 words = [] #holds words that has been read in from file
 results = [] #holds the matching encodings for numbers
 
-
 #reads every line of a file containing words and adds them to words
 def readWordFile(filePath):
 	with open(filePath, 'r') as theFile:
