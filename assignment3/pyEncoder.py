@@ -17,15 +17,10 @@ DICT = {
 words = [] #holds words that has been read in from file
 results = [] #holds the matching encodings for numbers
 
-#reads every line of a file containing words and adds them to words
-def readWordFile(filePath):
+#returns a list of every entry in the file in lower case.
+def readFile(filePath):
 	with open(filePath, 'r') as theFile:
 		return [word.rstrip('\n').lower() for word in theFile]
-
-#reads every line of a file containing numbers and return a list of those numbers
-def readNumberFile(filePath):
-	with open(filePath, 'r') as theFile:
-		return [number.rstrip('\n') for number in theFile]
 
 def wordToNumber(word):
 	return ''.join(str(DICT[e]) for e in list(word))
@@ -41,10 +36,10 @@ def buildEncoding(number, encoding):
 			wordAsNumber = wordToNumber(word)
 			if number.startswith(wordAsNumber):
 				newEncoding =  (encoding + word) if encoding == "" else (encoding + " %s" % (word))
-				encode(number[len(word):], newEncoding)	
+				findMatch(number[len(word):], newEncoding)	
 
 #adds or builds number to word encodings
-def encode(number, encoding):		
+def findMatch(number, encoding):		
 	if number == "":
 		addMatch(encoding)
 	else:
@@ -56,19 +51,16 @@ def main(argv):
 		global words
 		numberFilePath = argv[0]
 		wordFilePath = argv[1]
-		numbers = readNumberFile(numberFilePath)
-		words = readWordFile(wordFilePath)
+		numbers = readFile(numberFilePath)
+		words = readFile(wordFilePath)
 
 		for number in numbers:
-			encode(number, "")	
+			findMatch(number, "")	
 
 		for result in results:
 			print result
 	except:
-		print "###### ERROR ########"
-		print "To execute:"
-		print "python pyEncoder.py <fileWithNumbers.txt> <fileWithWords.txt>\n"
-		print "###### ERROR ########"
+		print "To execute: python pyEncoder.py <fileWithNumbers.txt> <fileWithWords.txt>"		
 
 if __name__ == "__main__":
     main(sys.argv[1:])
