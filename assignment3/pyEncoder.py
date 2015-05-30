@@ -3,7 +3,7 @@ pyEncoder.py is used to encode numbers provided in a file of numbers into words 
 by a file that contains words. 
 
 '''
-
+import sys
 
 DICT = {
 	"6":6, "k":7, "v":6, "7":7, "l":8, "a":5, "w":2, 
@@ -52,13 +52,24 @@ def encode(number, encoding):
 		buildEncoding(number, encoding)
 
 #main takes a word and number file and encodes each number into matching words from the wordFile 
-def main(numberFilePath, wordFilePath):
-	global words
-	numbers = readNumberFile(numberFilePath)
-	words = readWordFile(wordFilePath)
+def main(argv):
+	try:
+		global words
+		numberFilePath = argv[0]
+		wordFilePath = argv[1]
+		numbers = readNumberFile(numberFilePath)
+		words = readWordFile(wordFilePath)
 
-	for number in numbers:
-		encode(number, "")	
+		for number in numbers:
+			encode(number, "")	
 
-	for result in results:
-		print result
+		for result in results:
+			print result
+	except:
+		print "###### ERROR ########"
+		print "To execute:"
+		print "python pyEncoder.py <fileWithNumbers.txt> <fileWithWords.txt>\n"
+		print "###### ERROR ########"
+
+if __name__ == "__main__":
+    main(sys.argv[1:])
