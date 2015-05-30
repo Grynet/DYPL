@@ -20,7 +20,7 @@ results = [] #holds the matching encodings for numbers
 #returns a list of every entry in the file in lower case.
 def readFile(filePath):
 	with open(filePath, 'r') as theFile:
-		return [word.rstrip('\n').lower() for word in theFile]
+		return [word.rstrip('\n').replace("-","").lower() for word in theFile]
 
 def wordToNumber(word):
 	return ''.join(str(DICT[e]) for e in list(word))
