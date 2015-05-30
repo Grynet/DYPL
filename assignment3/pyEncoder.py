@@ -1,6 +1,6 @@
 '''
 pyEncoder.py is used to encode numbers provided in a file of numbers into words that are provided 
-by a file of words. The main method 
+by a file that contains words. 
 
 '''
 
@@ -51,8 +51,8 @@ def encode(number, encoding):
 	else:
 		buildEncoding(number, encoding)
 
-#find matchings word encodings for the numbers in the number and word files provided 
-def findMatches(numberFilePath, wordFilePath):
+#main takes a word and number file and encodes each number into matching words from the wordFile 
+def main(numberFilePath, wordFilePath):
 	global words
 	numbers = readNumberFile(numberFilePath)
 	words = readWordFile(wordFilePath)
