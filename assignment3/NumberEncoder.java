@@ -178,4 +178,10 @@ public class NumberEncoder {
 		}
 	}
 
+	public static void main(String[] args) {
+		String pathToWords = args[0];
+		String pathToNumbers = args[1];
+		NumberEncoder encoder = new NumberEncoder(pathToWords, pathToNumbers);
+		encoder.encode();
+	}
 }
