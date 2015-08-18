@@ -178,10 +178,16 @@ public class NumberEncoder {
 		}
 	}
 
-	public static void main(String[] args) {
-		String pathToWords = args[0];
-		String pathToNumbers = args[1];
-		NumberEncoder encoder = new NumberEncoder(pathToWords, pathToNumbers);
-		encoder.encode();
+	public static void main(String[] args) {		
+
+		if (args.length == 2) {
+			String pathToNumbers = args[0];
+			String pathToWords = args[1];
+			NumberEncoder encoder = new NumberEncoder(pathToWords, pathToNumbers);
+			encoder.encode();
+		} else {
+			System.out.println("To execute: java NumberEncoder <fileWithNumbers.txt> <fileWithWords.txt>");
+		}
+
 	}
 }
